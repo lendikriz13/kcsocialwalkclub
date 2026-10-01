@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+
+const photos = Object.values(import.meta.glob('../content/gallery/*.md', { eager: true }))
+  .map((m) => m.frontmatter)
+  .filter((p) => p && p.image)
+  .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+---
+
+<Base
+  title="Gallery"
+  description="Photos from KC Social Walk Club walks, runs, and events around Kansas City."
+  path="/gallery"
+>
+  <section class="section section--white intro">
+    <div class="wrap">
+      <h1>A Look At The Community</h1>
+      <p class="lede">Photos from walks, runs, and events around the city.</p>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap">
+      {
+        photos.length > 0 ? (
+          <div class="masonry">
+            {photos.map((photo) => (
+              <figure class="masonry__item">
+                <img
+                  src={photo.image}
+                  alt={photo.caption || 'KC Social Walk Club'}
+                  loading="lazy"
+                />
+                {photo.caption && <figcaption>{photo.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <p>Photos are on the way. Come to a walk and you might end up in them.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding-block: 4rem 1rem;
+  }
+
+  /* CSS columns give a true masonry flow without measuring anything in JS. */
+  .masonry {
+    columns: 3;
+    column-gap: 1rem;
+  }
+
+  .masonry__item {
+    /* break-inside keeps a photo from splitting across two columns. */
+    break-inside: avoid;
+    margin: 0 0 1rem;
+    overflow: hidden;
+    border-radius: var(--radius-photo);
+  }
+
+  .masonry__item img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-photo);
+    transition: transform 200ms ease;
+  }
+
+  .masonry__item:hover img {
+    transform: scale(1.05) rotate(1deg);
+  }
+
+  .masonry__item:nth-child(even):hover img {
+    transform: scale(1.05) rotate(-1deg);
+  }
+
+  .masonry__item figcaption {
+    padding: 0.6rem 0.2rem 0;
+    font-size: 0.87rem;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 900px) {
+    .masonry {
+      columns: 2;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .masonry {
+      columns: 1;
+    }
+  }
+</style>

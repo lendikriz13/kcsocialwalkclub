@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/site.js';
+---
+
+<Base title="Page not found" description="That page doesn't exist." path="/404">
+  <section class="section section--white lost">
+    <div class="wrap wrap--narrow">
+      <img
+        src={site.mascot}
+        alt="The KC Social Walk Club mascot, walking the wrong way"
+        width="180"
+        height="231"
+        class="lost__mascot"
+      />
+      <h1>Wrong turn.</h1>
+      <p class="lede">This page doesn't exist, but the next walk does.</p>
+      <p><a class="btn" href="/events">See Upcoming Events</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    text-align: center;
+    padding-block: 5rem 6rem;
+  }
+
+  /* Flipped and tipped so the mascot reads as heading off the wrong way. */
+  .lost__mascot {
+    height: 180px;
+    width: auto;
+    margin: 0 auto 2rem;
+    transform: scaleX(-1) rotate(-8deg);
+  }
+
+  .lost .lede {
+    max-width: none;
+    margin-bottom: 2.25rem;
+  }
+
+  .lost p {
+    max-width: none;
+  }
+</style>

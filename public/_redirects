@@ -1,0 +1,7 @@
+# The redesign consolidated five pages. These URLs are already indexed, so they
+# redirect permanently rather than 404.
+/walks           /what-we-do#walks    301
+/runs            /what-we-do#runs     301
+/social-events   /what-we-do#social   301
+/get-involved    /about#get-involved  301
+/faq             /about#questions     301

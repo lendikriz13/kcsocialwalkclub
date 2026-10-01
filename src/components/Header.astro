@@ -1,0 +1,296 @@
+---
+import { site } from '../lib/site.js';
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="masthead">
+  <div class="wrap masthead__inner">
+    <a href="/" class="brand" aria-label={site.name}>
+      <img src={site.mascotSmall} alt="" width="40" height="51" class="brand__mascot" />
+      <span class="brand__text" aria-hidden="true">
+        <span class="brand__kc">KC</span>
+        <span class="brand__social">Social</span>
+        <span class="brand__club">Walk Club</span>
+      </span>
+    </a>
+
+    <nav class="masthead__nav" aria-label="Main">
+      {
+        site.nav.map((item) => (
+          <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button class="burger" type="button" aria-expanded="false" aria-controls="mobile-nav">
+      <span class="visually-hidden">Menu</span>
+      <span class="burger__bar"></span>
+      <span class="burger__bar"></span>
+      <span class="burger__bar"></span>
+    </button>
+  </div>
+
+  <div class="overlay" id="mobile-nav" hidden>
+    <button class="overlay__close" type="button">
+      <span class="visually-hidden">Close menu</span>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M5 5l14 14M19 5L5 19"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <nav class="overlay__nav" aria-label="Main">
+      {
+        site.nav.map((item) => (
+          <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <img src={site.mascotSmall} alt="" width="62" height="80" class="overlay__mascot" />
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    var head = document.querySelector('.masthead');
+    var burger = document.querySelector('.burger');
+    var overlay = document.getElementById('mobile-nav');
+    var close = document.querySelector('.overlay__close');
+
+    // Shadow once the page has moved off the top.
+    var onScroll = function () {
+      head.classList.toggle('scrolled', window.scrollY > 50);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    var setOpen = function (open) {
+      overlay.hidden = !open;
+      burger.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) close.focus();
+      else burger.focus();
+    };
+
+    burger.addEventListener('click', function () {
+      setOpen(overlay.hidden);
+    });
+    close.addEventListener('click', function () {
+      setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !overlay.hidden) setOpen(false);
+    });
+  })();
+</script>
+
+<style>
+  .masthead {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    transition: box-shadow 200ms ease;
+  }
+
+  .masthead.scrolled {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .masthead__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 0.85rem;
+  }
+
+  /* ---- Brand lockup ---- */
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--green);
+  }
+
+  .brand__mascot {
+    height: 40px;
+    width: auto;
+    flex: none;
+  }
+
+  .brand__text {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .brand__kc,
+  .brand__club {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .brand__social {
+    font-family: var(--font-accent);
+    font-size: 1.45rem;
+  }
+
+  /* ---- Desktop nav ---- */
+
+  .masthead__nav {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .masthead__nav a {
+    position: relative;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--green);
+    text-decoration: none;
+    padding-block: 0.2rem;
+  }
+
+  .masthead__nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: var(--green);
+    transition: width 200ms ease;
+  }
+
+  .masthead__nav a:hover::after,
+  .masthead__nav a[aria-current='page']::after {
+    width: 100%;
+  }
+
+  /* ---- Hamburger ---- */
+
+  .burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 48px;
+    height: 48px;
+    padding: 0 12px;
+    margin-right: -12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .burger__bar {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--green);
+    border-radius: 2px;
+  }
+
+  /* ---- Mobile overlay ---- */
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .overlay[hidden] {
+    display: none;
+  }
+
+  .overlay__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .overlay__nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .overlay__nav a {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2rem;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    /* 48px minimum tap target. */
+    padding: 0.5rem 1.5rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .overlay__mascot {
+    position: absolute;
+    bottom: 2rem;
+    height: 80px;
+    width: auto;
+    opacity: 0.3;
+  }
+
+  @media (max-width: 768px) {
+    .masthead__nav {
+      display: none;
+    }
+    .burger {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .overlay {
+      display: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .brand__kc,
+    .brand__club {
+      font-size: 1.1rem;
+    }
+    .brand__social {
+      font-size: 1.25rem;
+    }
+  }
+</style>

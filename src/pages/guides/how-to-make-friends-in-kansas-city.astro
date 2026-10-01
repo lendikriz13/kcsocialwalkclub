@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import { getUpcomingEvents } from '../../lib/calendar.js';
+
+const upcoming = (await getUpcomingEvents()).slice(0, 3);
+---
+
+<Base
+  title="How to make friends in Kansas City"
+  description="A practical guide to meeting people in Kansas City: where to start, what actually works, and how to turn a first conversation into a real friendship."
+  path="/guides/how-to-make-friends-in-kansas-city"
+>
+  <section class="section section--white">
+    <div class="wrap wrap--narrow">
+      <h1>How to make friends in Kansas City</h1>
+      <p class="lede">
+        Moving here, coming out of a long stretch of work, or just realizing your circle got small.
+        Here's what actually works for meeting people in this city.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--white">
+    <div class="wrap wrap--narrow prose">
+      <h2>Pick something that repeats</h2>
+      <p>
+        One-off events are hard to build on. You meet someone, have a good conversation, and never
+        see them again. Recurring gatherings work better because friendship comes from repeated
+        low-stakes contact, not from a single great first meeting. A weekly walk, a monthly game
+        night, a class that runs eight weeks. The repetition does the work.
+      </p>
+      <p>
+        This is the single biggest difference between people who build a circle here and people who
+        stay stuck. Choose the thing that happens again next week.
+      </p>
+
+      <h2>Choose activities where talking is the point</h2>
+      <p>
+        A movie night puts everyone in a dark room facing forward. A walk puts you shoulder to
+        shoulder with nothing to do but talk, which is why walking groups tend to produce actual
+        friendships faster than most other activities. Side-by-side conversation is easier than
+        face-to-face for most people, and there's a natural exit when the walk ends.
+      </p>
+      <p>Other formats that work the same way: group runs, volunteer shifts, rec league sports,
+        book clubs, and anything with a shared task in the middle.</p>
+
+      <h2>Where to look in Kansas City</h2>
+      <ul>
+        <li>
+          <strong>Walking and running groups.</strong> Free, no commitment, and they meet on a
+          fixed schedule. Most KC groups welcome people who show up alone.
+        </li>
+        <li>
+          <strong>Parks and trails.</strong> Loose Park, Tomahawk Creek Trail, and the trail system
+          across the metro host a steady stream of organized group activity.
+        </li>
+        <li>
+          <strong>Libraries and community centers.</strong> Kansas City Public Library branches run
+          free programming, including book clubs, that nobody thinks to check.
+        </li>
+        <li>
+          <strong>Volunteering.</strong> Shared work builds rapport quickly, and shifts repeat.
+        </li>
+        <li>
+          <strong>Rec leagues and classes.</strong> Kickball, volleyball, pottery, language groups.
+          The activity gives you something to talk about immediately.
+        </li>
+      </ul>
+
+      <h2>Go alone</h2>
+      <p>
+        Bringing a friend feels safer and it works against you. If you arrive with someone, you'll
+        talk to that person and leave having met nobody. Showing up alone is uncomfortable for
+        about six minutes and then it isn't. Most groups have people there for exactly the same
+        reason you are.
+      </p>
+
+      <h2>Go back a second time</h2>
+      <p>
+        The first time is introductions. The second time is when people remember your name, and the
+        third is when you start getting invited to things. Most people quit after one visit because
+        it felt awkward, which is the normal way a first visit feels. The awkwardness is not a
+        signal to stop.
+      </p>
+
+      <h2>Make the small ask</h2>
+      <p>
+        At some point somebody has to suggest coffee after, or a different event next week. It
+        might as well be you. Keep it small and specific, tied to something already happening, and
+        easy to say no to. Low stakes on both sides.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--cream">
+    <div class="wrap">
+      <h2>An easy place to start</h2>
+      <p class="lede">
+        Our walks are free, they repeat, and most people come alone. No sign-up, no dues. Show up at
+        the meeting spot and walk with us.
+      </p>
+      <EventList
+        events={upcoming}
+        emptyMessage="Nothing on the calendar right this minute. New dates go up regularly."
+      />
+      <p style="margin-top:2rem"><a class="btn" href="/what-we-do#walks">How the walks work</a></p>
+    </div>
+  </section>
+</Base>

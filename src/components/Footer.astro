@@ -1,0 +1,148 @@
+---
+import { site } from '../lib/site.js';
+
+const quickLinks = [
+  { label: 'What We Do', href: '/what-we-do' },
+  { label: 'Events', href: '/events' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'About', href: '/about' },
+];
+
+const socials = [
+  { label: 'Instagram', href: site.social.instagram },
+  { label: 'TikTok', href: site.social.tiktok },
+  { label: 'Facebook', href: site.social.facebook },
+].filter((s) => s.href);
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__cols">
+      <nav class="footer__col" aria-label="Footer">
+        <h2 class="footer__head">Explore</h2>
+        {quickLinks.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+
+      {
+        socials.length > 0 && (
+          <nav class="footer__col" aria-label="Social">
+            <h2 class="footer__head">Follow</h2>
+            {socials.map((s) => (
+              <a href={s.href} rel="me noopener" target="_blank">
+                {s.label}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+
+      <div class="footer__col">
+        <h2 class="footer__head">{site.name}</h2>
+        <p class="footer__place">Est. {site.founded} · Kansas City, MO</p>
+      </div>
+    </div>
+
+    <div class="footer__base">
+      <a href="/guides/how-to-make-friends-in-kansas-city">
+        Guide: How to make friends in Kansas City
+      </a>
+      <p class="footer__copy">© {site.founded} {site.name}</p>
+    </div>
+  </div>
+
+  <img src={site.mascotSmall} alt="" width="46" height="59" class="footer-mascot" />
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    overflow: hidden;
+    background: var(--black);
+    color: #fff;
+    padding-block: 4rem 6rem;
+  }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+
+  .footer__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+
+  .footer__head {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--yellow);
+    margin: 0 0 0.35rem;
+  }
+
+  .footer__col a {
+    font-size: 0.95rem;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .footer__col a:hover {
+    color: var(--yellow);
+    text-decoration: underline;
+  }
+
+  .footer__place {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .footer__base {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer__base a {
+    font-size: 0.95rem;
+    color: #fff;
+  }
+
+  .footer__base a:hover {
+    color: var(--yellow);
+  }
+
+  .footer__copy {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .footer-mascot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 60px;
+    width: auto;
+    opacity: 0.85;
+    pointer-events: none;
+    animation: walkAcross 20s linear infinite;
+  }
+
+  @media (max-width: 700px) {
+    .footer__cols {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

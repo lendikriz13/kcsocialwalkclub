@@ -1,0 +1,524 @@
+---
+import Base from '../layouts/Base.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import { getUpcomingEvents, fullDate, timeLabel, addToCalendarUrl } from '../lib/calendar.js';
+import { site } from '../lib/site.js';
+
+const upcoming = await getUpcomingEvents();
+const next = upcoming[0];
+
+const photos = Object.values(import.meta.glob('../content/gallery/*.md', { eager: true }))
+  .map((m) => m.frontmatter)
+  .filter((p) => p && p.image)
+  .slice(0, 4);
+
+const socialPosts = Object.values(import.meta.glob('../content/social-posts/*.md', { eager: true }))
+  .map((m) => m.frontmatter)
+  .filter((p) => p && p.url)
+  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  .slice(0, 4);
+
+// The tagline staggers in a word at a time. 80ms per word, then the button.
+const taglineWords =
+  'The walking club that brings people together who love to walk, socialize, and stay healthy'.split(
+    ' '
+  );
+const ctaDelay = 400 + taglineWords.length * 80 + 200;
+
+// One featured TikTok. Paste the video URL here to switch the placeholder for
+// a real lazy-loaded embed - nothing else needs to change.
+const featuredTikTok = '';
+const tiktokId = featuredTikTok.match(/video\/(\d+)/)?.[1];
+
+const ways = [
+  {
+    title: 'Walks',
+    body: 'Easy-paced walks through Kansas City parks, trails, and neighborhoods. No fee, no sign-up, no pace requirement.',
+    href: '/what-we-do#walks',
+    cta: 'See the walks',
+  },
+  {
+    title: 'Runs',
+    body: 'Group runs with music, including the DJ Run series. Same community, a little more movement.',
+    href: '/what-we-do#runs',
+    cta: 'See the runs',
+  },
+  {
+    title: 'Social Events',
+    body: "Game nights, meetups, and seasonal gatherings for the people who'd rather sit down than lace up.",
+    href: '/what-we-do#social',
+    cta: "See what's planned",
+  },
+];
+---
+
+<Base
+  title=""
+  description="KC Social Walk Club hosts free social walks, runs, and community events across Kansas City. Come alone or bring a friend."
+  path="/"
+>
+  <!-- 1. Hero -->
+  <section class="hero">
+    <div class="wrap hero__inner">
+      <div class="hero__text">
+        <h1 class="lockup">
+          <span class="lockup__kc">KC</span>
+          <span class="lockup__social">Social</span>
+          <span class="lockup__club">Walk Club</span>
+        </h1>
+
+        <p class="hero__tagline">
+          {
+            taglineWords.map((word, i) => (
+              <span style={`animation-delay:${400 + i * 80}ms`}>{word} </span>
+            ))
+          }
+        </p>
+
+        <p class="hero__cta" style={`animation-delay:${ctaDelay}ms`}>
+          <a class="btn btn--yellow" href="/events">See Upcoming Events</a>
+        </p>
+      </div>
+
+      <div class="hero__art">
+        <img
+          src={site.mascot}
+          alt="The KC Social Walk Club mascot, mid-stride"
+          width="420"
+          height="540"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Next up -->
+  {
+    next && (
+      <section class="section section--white">
+        <div class="wrap">
+          <h2>Next Up</h2>
+          <div class="next reveal">
+            <span class="cat">
+              <span class="cat__dot" style={`background:${next.category.swatch}`} />
+              {next.category.label}
+            </span>
+            <h3 class="next__title">{next.title}</h3>
+            <p class="next__when">{fullDate(next.start)}</p>
+            <p class="next__where">
+              {timeLabel(next)}
+              {next.location ? ` · ${next.location}` : ''}
+            </p>
+            <div class="next__actions">
+              <a class="btn" href={addToCalendarUrl(next)} target="_blank" rel="noopener">
+                Add to Calendar
+              </a>
+              <a class="btn btn--ghost" href={`/events/${next.slug}`}>
+                Event Details
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 3. What we do -->
+  <section class="section section--cream">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>What We Do</h2>
+        <a class="textlink" href="/what-we-do">All three, in detail</a>
+      </div>
+      <div class="cards reveal-group">
+        {
+          ways.map((way) => (
+            <div class="card reveal-item">
+              <h3>{way.title}</h3>
+              <p>{way.body}</p>
+              <a class="textlink" href={way.href}>
+                {way.cta}
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. See us out there -->
+  <section class="section section--white">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>See Us Out There</h2>
+        <a class="textlink" href="/gallery">Full gallery</a>
+      </div>
+
+      <div class="out-there reveal">
+        <div class="embed">
+          {
+            tiktokId ? (
+              <iframe
+                src={`https://www.tiktok.com/embed/v2/${tiktokId}`}
+                title="KC Social Walk Club on TikTok"
+                loading="lazy"
+                allow="encrypted-media"
+                allowfullscreen
+              />
+            ) : (
+              <div class="embed__slot">
+                <p>A featured TikTok lands here.</p>
+                <a class="btn btn--ghost" href={site.social.tiktok} target="_blank" rel="noopener">
+                  Watch on TikTok
+                </a>
+              </div>
+            )
+          }
+        </div>
+
+        <div class="out-there__grid">
+          {
+            Array.from({ length: 4 }).map((_, i) =>
+              photos[i] ? (
+                <a class="tilt" href="/gallery">
+                  <img
+                    class="photo"
+                    src={photos[i].image}
+                    alt={photos[i].caption || 'KC Social Walk Club'}
+                    loading="lazy"
+                  />
+                </a>
+              ) : (
+                <PhotoSlot />
+              )
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. About teaser -->
+  <section class="section section--green">
+    <div class="wrap about-teaser reveal">
+      <p class="lede">
+        {site.name} is a Kansas City social community created to bring people together through walking,
+        events, music, and shared experiences. What started as a simple way to meet people and explore
+        the city has grown into a group that gathers across the metro. Whether you're coming alone or
+        bringing a friend, there's always an opportunity to meet someone new.
+      </p>
+      <p class="about-teaser__est">Est. {site.founded}, Kansas City</p>
+      <p class="about-teaser__founder">Started by {site.founder}</p>
+      <p><a class="btn btn--yellow" href="/about">Learn More</a></p>
+    </div>
+  </section>
+
+  <!-- 6. Follow along -->
+  <section class="section section--cream">
+    <div class="wrap">
+      <h2>Follow Along</h2>
+
+      <div class="cards cards--tight reveal-group">
+        {
+          socialPosts.length > 0
+            ? socialPosts.map((post) => (
+                <a
+                  class="post reveal-item"
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`View this post on ${post.platform}`}
+                >
+                  <span class="post__thumb">
+                    <img class="photo" src={post.image} alt="" loading="lazy" />
+                    <span class="post__badge">{post.platform.slice(0, 2).toUpperCase()}</span>
+                  </span>
+                </a>
+              ))
+            : Array.from({ length: 4 }).map(() => (
+                <div class="reveal-item">
+                  <PhotoSlot label="Social post coming soon" />
+                </div>
+              ))
+        }
+      </div>
+
+      <p class="handles">
+        <a href={site.social.instagram} target="_blank" rel="noopener">@kcsocialwalkclub</a>
+        <span aria-hidden="true">·</span>
+        <a href={site.social.tiktok} target="_blank" rel="noopener">@kcsocialwalkclub on TikTok</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---- Hero ---- */
+
+  .hero {
+    background: var(--green);
+    color: #fff;
+    padding-block: 4.5rem 5rem;
+    overflow: hidden;
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .lockup {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    margin: 0 0 1.25rem;
+    line-height: 0.95;
+    text-transform: none;
+  }
+
+  .lockup__kc,
+  .lockup__club {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-5);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeSlideUp 500ms ease forwards;
+  }
+
+  .lockup__social {
+    font-family: var(--font-accent);
+    font-size: clamp(2rem, 5.5vw, 3.9rem);
+    line-height: 1.15;
+    opacity: 0;
+    animation: fadeSlideUp 500ms ease forwards;
+  }
+
+  .lockup__kc {
+    animation-delay: 80ms;
+  }
+  .lockup__social {
+    animation-delay: 160ms;
+  }
+  .lockup__club {
+    animation-delay: 240ms;
+  }
+
+  .hero__tagline {
+    font-family: var(--font-body);
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: #fff;
+    max-width: 30ch;
+    margin-bottom: 2rem;
+  }
+
+  .hero__tagline span {
+    display: inline-block;
+    white-space: pre;
+    opacity: 0;
+    animation: fadeSlideUp 500ms ease forwards;
+  }
+
+  .hero__cta {
+    margin: 0;
+    opacity: 0;
+    animation: fadeSlideUp 500ms ease forwards;
+  }
+
+  .hero__art img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin-inline: auto;
+    opacity: 0;
+    animation: bounceIn 600ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 200ms;
+  }
+
+  @media (max-width: 820px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      text-align: center;
+    }
+    .hero__art {
+      order: -1;
+    }
+    .hero__art img {
+      max-width: 60%;
+    }
+    .lockup {
+      align-items: center;
+    }
+    .hero__tagline {
+      margin-inline: auto;
+    }
+  }
+
+  /* ---- Next up ---- */
+
+  .next {
+    background: #fff;
+    border-radius: var(--radius-card);
+    border-left: 5px solid var(--yellow);
+    box-shadow: var(--shadow-card);
+    padding: 2.5rem;
+  }
+
+  .next__title {
+    font-size: var(--step-3);
+    margin: 0.85rem 0 0.75rem;
+  }
+
+  .next__when {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--step-2);
+    color: var(--ink);
+    margin: 0 0 0.2rem;
+  }
+
+  .next__where {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .next__actions {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  /* ---- See us out there ---- */
+
+  .out-there {
+    display: grid;
+    /* The embed is a portrait video, so it gets a fixed column rather than
+       half the page - otherwise it towers over the photo grid beside it. */
+    grid-template-columns: 340px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .embed {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--cream);
+    aspect-ratio: 9 / 14;
+  }
+
+  .embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .embed__slot {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .embed__slot p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .out-there__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .out-there {
+      grid-template-columns: 1fr;
+    }
+    .embed {
+      max-width: 340px;
+      margin-inline: auto;
+    }
+  }
+
+  /* ---- About teaser ---- */
+
+  .about-teaser .lede {
+    max-width: 62ch;
+  }
+
+  .about-teaser__est {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-3);
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin: 2rem 0 0.25rem;
+  }
+
+  .about-teaser__founder {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+  }
+
+  /* ---- Follow along ---- */
+
+  .cards--tight {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .post {
+    display: block;
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .post:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .post__thumb {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .post__badge {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    display: grid;
+    place-items: center;
+    min-width: 1.9rem;
+    height: 1.9rem;
+    padding-inline: 0.4rem;
+    border-radius: var(--radius-pill);
+    background: rgba(26, 26, 26, 0.85);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .handles {
+    margin: 2rem 0 0;
+    max-width: none;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-weight: 500;
+  }
+</style>

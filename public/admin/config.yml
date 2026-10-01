@@ -1,0 +1,76 @@
+# Decap CMS configuration
+# Replace REPO_OWNER/REPO_NAME below with the GitHub repo this site lives in.
+
+backend:
+  name: github
+  repo: REPO_OWNER/REPO_NAME
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+site_url: https://kcsocialwalkclub.com
+display_url: https://kcsocialwalkclub.com
+logo_url: https://kcsocialwalkclub.com/images/logo.jpg
+
+collections:
+  - name: "gallery"
+    label: "Photos"
+    label_singular: "Photo"
+    folder: "src/content/gallery"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{caption}}"
+    fields:
+      - { label: "Photo", name: "image", widget: "image" }
+      - { label: "Caption", name: "caption", widget: "string", required: false, hint: "Describe what's in the photo. Helps people using screen readers." }
+      - { label: "Date taken", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+
+  - name: "pages"
+    label: "Page text"
+    editor:
+      preview: false
+    files:
+      - name: "about"
+        label: "About page"
+        file: "src/content/pages/about.md"
+        fields:
+          - { label: "Page heading", name: "title", widget: "string" }
+          - { label: "Search description", name: "description", widget: "text", hint: "One or two sentences. Shows up in Google results." }
+          - { label: "Body", name: "body", widget: "markdown" }
+
+      - name: "get-involved"
+        label: "Get Involved page"
+        file: "src/content/pages/get-involved.md"
+        fields:
+          - { label: "Page heading", name: "title", widget: "string" }
+          - { label: "Search description", name: "description", widget: "text" }
+          - { label: "Contact email", name: "contactEmail", widget: "string", required: false, hint: "Leave blank to hide the email button." }
+          - { label: "Body", name: "body", widget: "markdown" }
+
+      - name: "faq"
+        label: "Questions page"
+        file: "src/content/pages/faq.md"
+        fields:
+          - { label: "Page heading", name: "title", widget: "string" }
+          - { label: "Search description", name: "description", widget: "text" }
+          - label: "Questions"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.question}}"
+            fields:
+              - { label: "Question", name: "question", widget: "string" }
+              - { label: "Answer", name: "answer", widget: "text" }
+
+  - name: "social-posts"
+    label: "Social Posts"
+    label_singular: "Social post"
+    folder: "src/content/social-posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{platform}} - {{url}}"
+    fields:
+      - { label: "Platform", name: "platform", widget: "select", options: ["instagram", "tiktok", "facebook"] }
+      - { label: "Post URL", name: "url", widget: "string", hint: "Link to the post. Opens in a new tab." }
+      - { label: "Thumbnail", name: "image", widget: "image" }
+      - { label: "Sort order", name: "order", widget: "number", default: 0, value_type: "int", hint: "Lower numbers show first." }

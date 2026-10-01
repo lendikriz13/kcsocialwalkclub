@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+---
+
+<Base
+  title="What we do"
+  description="Free social walks, group runs, and social events across Kansas City. KC Social Walk Club is open to everyone, with no fee and no sign-up."
+  path="/what-we-do"
+>
+  <section class="section section--white intro">
+    <div class="wrap">
+      <h1>What We Do</h1>
+      <p class="lede">
+        Three ways to be part of the club. All of them free, all of them open to anyone who shows
+        up.
+      </p>
+    </div>
+  </section>
+
+  <!-- Walks -->
+  <section class="section section--white" id="walks">
+    <div class="wrap block">
+      <div class="block__text reveal">
+        <h2>Walks</h2>
+        <p>
+          We meet at the trailhead or park entrance listed on the event page, walk at a
+          conversational pace, and finish together. Most walks run under two miles and take about an
+          hour. You will not get dropped and you do not need to be fast.
+        </p>
+        <p>
+          Walks are free. There is no membership, no dues, and nothing to sign up for. Show up at
+          the meeting spot a few minutes early and look for the group.
+        </p>
+
+        <h3>What to bring</h3>
+        <ul>
+          <li>Shoes you can walk a couple of miles in</li>
+          <li>Water, especially from June through September</li>
+          <li>A friend, if you want one. Plenty of people come alone.</li>
+        </ul>
+
+        <h3>Walk colors</h3>
+        <p>
+          Each walk on the calendar is marked with a color. Green walks are the easy, flat routes.
+          Red walks cover more distance or more hills. Both are open to everyone, and both move at a
+          pace where you can hold a conversation.
+        </p>
+
+        <p><a class="btn" href="/events">See Upcoming Walks</a></p>
+      </div>
+
+      <div class="block__photos reveal-group">
+        <div class="reveal-item"><PhotoSlot label="Walk photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Walk photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Walk photo coming soon" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Runs -->
+  <section class="section section--cream" id="runs">
+    <div class="wrap block">
+      <div class="block__text reveal">
+        <h2>Runs</h2>
+        <p>
+          Music, movement, community. Our runs are the same club with a faster pace, including the
+          DJ Run series.
+        </p>
+        <p>
+          We start together, run the posted route, and regroup at the end. Every pace is welcome,
+          including a walk. Nobody finishes alone.
+        </p>
+        <p>
+          DJ Runs pair the route with live music at the start and finish. Route, meeting point, and
+          DJ details are on each event page.
+        </p>
+
+        <p><a class="btn" href="/events">See Upcoming Runs</a></p>
+      </div>
+
+      <div class="block__photos reveal-group">
+        <div class="reveal-item"><PhotoSlot label="Run photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Run photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Run photo coming soon" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social events -->
+  <section class="section section--yellow" id="social">
+    <div class="wrap block">
+      <div class="block__text reveal">
+        <h2>Social Events</h2>
+        <p>
+          Game nights, meetups, and seasonal gatherings for the people who'd rather sit down than
+          lace up.
+        </p>
+        <p>
+          Same community, no trail required. Social events go up on the calendar as they're planned,
+          and they're free like everything else we run.
+        </p>
+
+        <p><a class="btn btn--black" href="/events">See What's Planned</a></p>
+      </div>
+
+      <div class="block__photos reveal-group">
+        <div class="reveal-item"><PhotoSlot label="Social event photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Social event photo coming soon" /></div>
+        <div class="reveal-item"><PhotoSlot label="Social event photo coming soon" /></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding-block: 4rem 1rem;
+  }
+
+  .block {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .block__text h3 {
+    text-transform: none;
+    margin-top: 2rem;
+  }
+
+  .block__text ul {
+    max-width: var(--measure);
+    padding-left: 1.2rem;
+  }
+
+  .block__text li {
+    margin-bottom: 0.5rem;
+  }
+
+  .block__text p:last-child {
+    margin-top: 2rem;
+    margin-bottom: 0;
+  }
+
+  .block__photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .block__photos > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* The yellow block needs a black heading rather than the green default. */
+  .section--yellow h2 {
+    color: var(--black);
+  }
+
+  @media (max-width: 820px) {
+    .block {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

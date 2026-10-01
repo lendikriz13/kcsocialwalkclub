@@ -1,0 +1,200 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import {
+  getAllEvents,
+  getUpcomingEvents,
+  fullDate,
+  timeLabel,
+  addToCalendarUrl,
+} from '../../lib/calendar.js';
+import { site } from '../../lib/site.js';
+
+export async function getStaticPaths() {
+  const events = await getAllEvents();
+  const seen = new Set();
+  return events
+    .filter((event) => {
+      if (seen.has(event.slug)) return false;
+      seen.add(event.slug);
+      return true;
+    })
+    .map((event) => ({ params: { slug: event.slug }, props: { event } }));
+}
+
+const { event } = Astro.props;
+const isPast = new Date(event.start) < new Date();
+
+const upcoming = await getUpcomingEvents();
+const more = upcoming.filter((e) => e.slug !== event.slug).slice(0, 3);
+
+const summary = `${event.title} - a free ${event.category.label.toLowerCase()} with ${site.name} in Kansas City on ${fullDate(event.start)}.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: event.title,
+  startDate: event.start,
+  endDate: event.end || event.start,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  description: event.description || summary,
+  image: new URL(site.logo, site.url).href,
+  url: new URL(`/events/${event.slug}`, site.url).href,
+  isAccessibleForFree: true,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+    url: new URL(`/events/${event.slug}`, site.url).href,
+  },
+  location: {
+    '@type': 'Place',
+    name: event.location || 'Kansas City, MO',
+    // Free text, because the meeting spot is often a trailhead or park rather
+    // than a street address, and it is not always in Kansas City proper.
+    address: event.location || 'Kansas City, MO',
+  },
+  organizer: {
+    '@type': 'Organization',
+    name: site.name,
+    url: site.url,
+  },
+};
+---
+
+<Base
+  title={event.title}
+  description={event.description ? event.description.slice(0, 155) : summary}
+  path={`/events/${event.slug}`}
+  schema={schema}
+>
+  <article class="section section--white">
+    <div class="wrap wrap--narrow">
+      <span class="cat">
+        <span class="cat__dot" style={`background:${event.category.swatch}`}></span>
+        {event.category.label}
+      </span>
+
+      <h1>{event.title}</h1>
+
+      <div class="facts">
+        <dl>
+          <div>
+            <dt>When</dt>
+            <dd>{fullDate(event.start)}, {timeLabel(event)}</dd>
+          </div>
+          {
+            event.location && (
+              <div>
+                <dt>Where</dt>
+                <dd>{event.location}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Cost</dt>
+            <dd>Free</dd>
+          </div>
+        </dl>
+
+        {
+          !isPast && (
+            <p class="facts__cta">
+              <a class="btn" href={addToCalendarUrl(event)} target="_blank" rel="noopener">
+                Add to Calendar
+              </a>
+            </p>
+          )
+        }
+
+        {isPast && <p class="past-note">This event has already happened.</p>}
+      </div>
+
+      {
+        event.description && (
+          <div class="prose" set:html={event.description.replace(/\n/g, '<br />')} />
+        )
+      }
+
+      <p class="back"><a class="textlink" href="/events">All upcoming events</a></p>
+    </div>
+  </article>
+
+  {
+    more.length > 0 && (
+      <section class="section section--cream">
+        <div class="wrap">
+          <h2>Also Coming Up</h2>
+          <EventList events={more} />
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  h1 {
+    margin-top: 0.75rem;
+  }
+
+  .facts {
+    margin: 2rem 0 2.5rem;
+    background: #fff;
+    border-radius: var(--radius-card);
+    border-left: 5px solid var(--yellow);
+    box-shadow: var(--shadow-card);
+    padding: 1.75rem 2rem;
+  }
+
+  .facts dl {
+    margin: 0;
+  }
+
+  .facts > dl > div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1rem;
+    padding-block: 0.7rem;
+  }
+
+  .facts > dl > div + div {
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+
+  .facts dt {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    padding-top: 0.25rem;
+  }
+
+  .facts dd {
+    margin: 0;
+  }
+
+  .facts__cta {
+    margin: 1.5rem 0 0;
+  }
+
+  .past-note {
+    margin: 1.25rem 0 0;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  .back {
+    margin-top: 2.5rem;
+  }
+
+  @media (max-width: 520px) {
+    .facts > dl > div {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

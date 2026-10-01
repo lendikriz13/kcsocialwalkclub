@@ -1,0 +1,293 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/site.js';
+import { Content, frontmatter } from '../content/pages/about.md';
+import { frontmatter as involved } from '../content/pages/get-involved.md';
+import { frontmatter as faq } from '../content/pages/faq.md';
+
+const items = faq.items || [];
+
+const involvedCards = [
+  {
+    title: 'Volunteer',
+    body: 'Help make our events happen. Setup, route leading, photos, welcoming people who came alone. Say what you’d like to help with and we’ll find you a spot.',
+  },
+  {
+    title: 'Collaborate',
+    body: 'Bring your group, business, or venue into an upcoming walk, run, or social event.',
+  },
+  {
+    title: 'Sponsor',
+    body: 'Support upcoming community events. Sponsorship helps cover music, permits, and supplies, and puts you in front of a few hundred people who show up in person.',
+  },
+];
+
+const schema = items.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: items.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    }
+  : undefined;
+---
+
+<Base
+  title={frontmatter.title}
+  description={frontmatter.description}
+  path="/about"
+  schema={schema}
+>
+  <section class="section section--white hero">
+    <div class="wrap wrap--narrow">
+      <h1>About KC Social Walk Club</h1>
+      <div class="prose"><Content /></div>
+    </div>
+  </section>
+
+  <section class="section section--green est">
+    <div class="wrap reveal">
+      <p class="est__line">Est. {site.founded}</p>
+      <p class="est__place">Kansas City, MO</p>
+      <p class="est__founder">Started by {site.founder}</p>
+    </div>
+  </section>
+
+  <!-- Get involved -->
+  <section class="section section--cream" id="get-involved">
+    <div class="wrap">
+      <div class="section__head">
+        <h2>Get Involved</h2>
+        <p class="section__note">The club runs on people showing up.</p>
+      </div>
+
+      <div class="cards reveal-group">
+        {
+          involvedCards.map((card) => (
+            <div class="card reveal-item">
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      {
+        involved.contactEmail && (
+          <p class="involved__cta">
+            <a class="btn" href={`mailto:${involved.contactEmail}`}>
+              Email the club
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  {
+    items.length > 0 && (
+      <section class="section section--white" id="questions">
+        <div class="wrap wrap--narrow">
+          <h2>Questions</h2>
+
+          <div class="faq reveal">
+            {items.map((item, i) => (
+              <div class="faq__item">
+                <h3 class="faq__heading">
+                  <button
+                    class="faq__q"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={`faq-a-${i}`}
+                    id={`faq-q-${i}`}
+                  >
+                    <span>{item.question}</span>
+                    <span class="faq__icon" aria-hidden="true" />
+                  </button>
+                </h3>
+                <div class="faq__panel" id={`faq-a-${i}`} role="region" aria-labelledby={`faq-q-${i}`}>
+                  <div class="faq__answer">
+                    <p>{item.answer}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--cream">
+    <div class="wrap wrap--narrow center">
+      <p><a class="btn" href="/events">See Upcoming Events</a></p>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  (function () {
+    var buttons = document.querySelectorAll('.faq__q');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener('click', function () {
+        var open = this.getAttribute('aria-expanded') === 'true';
+        // Only one panel stays open at a time.
+        for (var j = 0; j < buttons.length; j++) {
+          buttons[j].setAttribute('aria-expanded', 'false');
+          buttons[j].parentElement.parentElement.classList.remove('is-open');
+        }
+        if (!open) {
+          this.setAttribute('aria-expanded', 'true');
+          this.parentElement.parentElement.classList.add('is-open');
+        }
+      });
+    }
+  })();
+</script>
+
+<style>
+  .hero {
+    padding-block: 4rem 3rem;
+  }
+
+  /* ---- Est. block ---- */
+
+  .est {
+    text-align: center;
+  }
+
+  .est__line {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3rem, 10vw, 6rem);
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+    max-width: none;
+  }
+
+  .est__place {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--step-2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0.5rem 0 0;
+    max-width: none;
+  }
+
+  .est__founder {
+    margin: 1.25rem 0 0;
+    max-width: none;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* ---- Get involved ---- */
+
+  .section__note {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .involved__cta {
+    margin: 2.5rem 0 0;
+  }
+
+  /* ---- FAQ accordion ---- */
+
+  .faq {
+    margin-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .faq__heading {
+    margin: 0;
+    font-size: inherit;
+    text-transform: none;
+  }
+
+  .faq__q {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    line-height: 1.25;
+    color: var(--green);
+  }
+
+  .faq__icon {
+    position: relative;
+    flex: none;
+    width: 18px;
+    height: 18px;
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 18px;
+    height: 2px;
+    background: var(--green);
+    border-radius: 2px;
+    transition: transform 200ms ease;
+  }
+
+  /* The vertical stroke rotates away, turning + into -. */
+  .faq__item.is-open .faq__icon::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .faq__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 220ms ease;
+  }
+
+  .faq__item.is-open .faq__panel {
+    grid-template-rows: 1fr;
+  }
+
+  .faq__answer {
+    overflow: hidden;
+  }
+
+  .faq__answer p {
+    margin: 0;
+    padding-bottom: 1.4rem;
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .center p {
+    max-width: none;
+    margin: 0;
+  }
+</style>

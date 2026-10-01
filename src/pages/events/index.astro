@@ -1,0 +1,79 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import { getUpcomingEvents, getPastEvents, formatDate } from '../../lib/calendar.js';
+
+const upcoming = await getUpcomingEvents();
+const past = (await getPastEvents()).slice(0, 12);
+
+// Group upcoming events by month so the calendar reads in order.
+const months = [];
+for (const event of upcoming) {
+  const label = formatDate(event.start, { month: 'long', year: 'numeric' });
+  const last = months[months.length - 1];
+  if (last && last.label === label) last.events.push(event);
+  else months.push({ label, events: [event] });
+}
+---
+
+<Base
+  title="Event calendar"
+  description="Every upcoming KC Social Walk Club walk, run, and social event in Kansas City. Free and open to everyone."
+  path="/events"
+>
+  <section class="section section--white intro">
+    <div class="wrap">
+      <h1>Event Calendar</h1>
+      <p class="lede">
+        Everything we have scheduled. Walks, runs, and social events across the Kansas City metro.
+        Nothing costs anything, and you never need to sign up ahead of time.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--cream">
+    <div class="wrap">
+      {
+        months.length > 0 ? (
+          months.map((month) => (
+            <div class="month">
+              <h2>{month.label}</h2>
+              <EventList events={month.events} />
+            </div>
+          ))
+        ) : (
+          <EventList events={[]} emptyMessage="No events on the calendar yet. Check back soon." />
+        )
+      }
+    </div>
+  </section>
+
+  {
+    past.length > 0 && (
+      <section class="section section--white">
+        <div class="wrap">
+          <div class="section__head">
+            <h2>Recently</h2>
+            <p class="section__note">Where the club has been lately.</p>
+          </div>
+          <EventList events={past} showAction={false} />
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .intro {
+    padding-block: 4rem 2rem;
+  }
+
+  .month + .month {
+    margin-top: 3.5rem;
+  }
+
+  .section__note {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+</style>

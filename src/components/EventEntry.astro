@@ -1,0 +1,40 @@
+---
+import { dayNumber, monthShort, weekdayShort, timeLabel, addToCalendarUrl } from '../lib/calendar.js';
+
+const { event, showAction = true } = Astro.props;
+---
+
+<article class="entry">
+  <div class="entry__date">
+    <span class="entry__day">{dayNumber(event.start)}</span>
+    <span class="entry__month">{monthShort(event.start)} · {weekdayShort(event.start)}</span>
+  </div>
+
+  <div class="entry__body">
+    <h3><a href={`/events/${event.slug}`}>{event.title}</a></h3>
+    <span class="cat">
+      <span class="cat__dot" style={`background:${event.category.swatch}`}></span>
+      {event.category.label}
+    </span>
+    <p class="entry__meta">
+      {timeLabel(event)}{event.location ? ` · ${event.location}` : ''}
+    </p>
+  </div>
+
+  {
+    showAction && (
+      <div class="entry__action">
+        <a class="btn btn--sm" href={addToCalendarUrl(event)} target="_blank" rel="noopener">
+          Add to calendar
+        </a>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .btn--sm {
+    padding: 0.6rem 1.35rem;
+    font-size: 0.87rem;
+  }
+</style>

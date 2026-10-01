@@ -1,0 +1,25 @@
+---
+import EventEntry from './EventEntry.astro';
+
+const {
+  events = [],
+  emptyMessage = 'Nothing on the calendar right now. Check back soon.',
+  showAction = true,
+} = Astro.props;
+---
+
+{
+  events.length > 0 ? (
+    <div class="events reveal-group">
+      {events.map((event) => (
+        <div class="reveal-item">
+          <EventEntry event={event} showAction={showAction} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="empty reveal">
+      <p>{emptyMessage}</p>
+    </div>
+  )
+}

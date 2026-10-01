@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../lib/site.js';
+
+const { title, description, path = '', schema } = Astro.props;
+
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.tagline}`;
+const pageDescription = description || site.description;
+const canonical = new URL(path, site.url).href;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: site.url,
+  logo: new URL(site.logo, site.url).href,
+  description: site.description,
+  foundingDate: site.founded,
+  areaServed: {
+    '@type': 'City',
+    name: 'Kansas City',
+  },
+  sameAs: Object.values(site.social).filter(Boolean),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(site.logo, site.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/images/logo.jpg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=UnifrakturMaguntia&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Arms the reveal styles only when JS runs, so a failed script can't hide the page. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <a href="#main" class="visually-hidden">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script src="/reveal.js" defer is:inline></script>
+  </body>
+</html>
