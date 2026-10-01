@@ -62,8 +62,10 @@ const ways = [
     <div class="wrap hero__inner">
       <div class="hero__text">
         <h1 class="lockup">
-          <span class="lockup__kc">KC</span>
-          <span class="lockup__social">Social</span>
+          <span class="lockup__top">
+            <span class="lockup__kc">KC</span>
+            <span class="lockup__social">Social</span>
+          </span>
           <span class="lockup__club">Walk Club</span>
         </h1>
 
@@ -278,32 +280,41 @@ const ways = [
     text-transform: none;
   }
 
+  /* "KC Social" sits on one line above "WALK CLUB", the way the printed
+     logo is set. */
+  .lockup__top {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25em;
+    white-space: nowrap;
+  }
+
   .lockup__kc,
   .lockup__club {
-    font-family: var(--font-display);
+    font-family: var(--font-lockup);
     font-weight: 700;
-    font-size: var(--step-5);
     text-transform: uppercase;
     opacity: 0;
     animation: fadeSlideUp 500ms ease forwards;
   }
 
+  .lockup__kc {
+    font-size: clamp(2.1rem, 5.6vw, 4rem);
+    animation-delay: 80ms;
+  }
+
+  .lockup__club {
+    font-size: var(--step-5);
+    animation-delay: 240ms;
+  }
+
   .lockup__social {
     font-family: var(--font-accent);
-    font-size: clamp(2rem, 5.5vw, 3.9rem);
+    font-size: clamp(2.2rem, 5.9vw, 4.2rem);
     line-height: 1.15;
     opacity: 0;
     animation: fadeSlideUp 500ms ease forwards;
-  }
-
-  .lockup__kc {
-    animation-delay: 80ms;
-  }
-  .lockup__social {
     animation-delay: 160ms;
-  }
-  .lockup__club {
-    animation-delay: 240ms;
   }
 
   .hero__tagline {
