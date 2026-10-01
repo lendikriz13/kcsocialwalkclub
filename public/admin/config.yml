@@ -1,9 +1,9 @@
 # Decap CMS configuration
-# Replace REPO_OWNER/REPO_NAME below with the GitHub repo this site lives in.
+# The GitHub repo this site lives in.
 
 backend:
   name: github
-  repo: REPO_OWNER/REPO_NAME
+  repo: lendikriz13/kcsocialwalkclub
   branch: main
 
 media_folder: "public/images/uploads"
